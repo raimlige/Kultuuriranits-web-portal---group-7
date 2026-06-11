@@ -26,6 +26,6 @@ public class Person {
     @ManyToOne
     private Role role;
 
-/*    @ManyToOne
-    private Organization organization;*/
+    @ManyToOne
+    private Organization organization;
 }

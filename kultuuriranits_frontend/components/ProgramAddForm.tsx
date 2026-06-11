@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { Category } from "../models/Category";
+import { Organization } from "../models/Organization";
 
 interface ProgramAddFormProps {
     categories: Category[];
+    organizations?: Organization[];
 }
 
 const API_URL = process.env.NEXT_PUBLIC_BACK_URL;
@@ -26,7 +28,6 @@ export function ProgramAddForm({
         location: "",
         language: "Eesti",
         status: "Active",
-        organizationId: "",
         categoryId: ""
     });
 
@@ -64,15 +65,12 @@ export function ProgramAddForm({
             location: formData.location,
             language: formData.language,
             status: formData.status,
-            organizationId: Number(formData.organizationId),
-
             category: {
                 id: Number(formData.categoryId)
             }
         };
 
         const multipartData = new FormData();
-
         multipartData.append(
             "program",
             new Blob(
@@ -92,7 +90,8 @@ export function ProgramAddForm({
             `${API_URL}/program`,
             {
                 method: "POST",
-                body: multipartData
+                body: multipartData,
+                credentials: "include"
             }
         );
 
@@ -117,7 +116,6 @@ export function ProgramAddForm({
             location: "",
             language: "Eesti",
             status: "Active",
-            organizationId: "",
             categoryId: ""
         });
 
@@ -240,14 +238,6 @@ export function ProgramAddForm({
                     Mitteaktiivne
                 </option>
             </select>
-
-            <input
-                name="organizationId"
-                type="number"
-                placeholder="Organisatsiooni ID"
-                value={formData.organizationId}
-                onChange={handleChange}
-            />
 
             <select
                 name="categoryId"

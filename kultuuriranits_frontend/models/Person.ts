@@ -1,4 +1,5 @@
 import { Role } from "./Role";
+import { Organization } from "./Organization";
 
 export interface Person {
     id?: number;
@@ -7,5 +8,6 @@ export interface Person {
     email: string;
     password?: string;
     personalCode: string;
-    role?: Role; 
+    role?: Role;
+    organization?: Organization;
 }

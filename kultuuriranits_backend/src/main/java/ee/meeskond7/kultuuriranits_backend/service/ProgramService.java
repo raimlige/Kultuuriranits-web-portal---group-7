@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
@@ -24,6 +25,14 @@ public class ProgramService {
         }
         return programRepository.searchPrograms(keyword, pageable);
     }
+
+
+
+    public Page<Program> searchProgramsAll(String keyword, Long categoryId, String location, String language, BigDecimal pricePerStudent, Integer durationMinutes, String targetGroup, Integer minGroupSize, Integer maxGroupSize, String status, Pageable pageable) {
+        
+        return programRepository.searchProgramsAll((keyword==null)?null:"%"+keyword.toLowerCase()+"%", categoryId, location, language, pricePerStudent, durationMinutes, targetGroup, minGroupSize,maxGroupSize, status, pageable);
+    }
+
 
     // Programmide lisamine
     public Program addProgram(Program program, MultipartFile imageFile) throws IOException {

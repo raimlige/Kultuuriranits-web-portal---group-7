@@ -25,7 +25,7 @@ interface SearchParams {
     categoryId?: string;
 }
 
-// kasutaja tuvastamine sessiooni kaudu
+// kasutaja tuvastamine
 async function getCurrentUser(): Promise<{ id: number } | null> {
     try {
         const cookieStore = await cookies();
@@ -198,6 +198,7 @@ export default async function ProgramsPage({
                     >
                         {programs.map((program) => {
                             const details = [
+                                ["Korraldaja", program.organization?.name ?? "Teadmata organisatsioon"],
                                 ["Hind", `${program.pricePerStudent}€`],
                                 ["Kestus", `${program.durationMinutes} min`],
                                 ["Asukoht", program.location],

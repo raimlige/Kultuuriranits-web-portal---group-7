@@ -58,6 +58,6 @@ public class Program {
     @ManyToOne
     private Category category;
 
-/*    @ManyToOne
-    private Organization organization;*/
+    @ManyToOne
+    private Organization organization;
 }

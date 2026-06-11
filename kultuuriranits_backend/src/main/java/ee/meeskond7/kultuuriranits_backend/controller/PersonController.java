@@ -1,8 +1,10 @@
 package ee.meeskond7.kultuuriranits_backend.controller;
 
 import ee.meeskond7.kultuuriranits_backend.dto.PersonLoginRecordDto;
+import ee.meeskond7.kultuuriranits_backend.entity.Booking;
 import ee.meeskond7.kultuuriranits_backend.entity.Category;
 import ee.meeskond7.kultuuriranits_backend.entity.Person;
+import ee.meeskond7.kultuuriranits_backend.entity.Program;
 import ee.meeskond7.kultuuriranits_backend.repository.PersonRepository;
 import ee.meeskond7.kultuuriranits_backend.service.PersonService;
 import jakarta.servlet.http.HttpSession;
@@ -47,6 +49,10 @@ public class PersonController {
 
         session.setAttribute("user_id", savedPerson.getId());
         session.setAttribute("user_role", person.getRole().getName());
+
+        if (savedPerson.getOrganization() != null) {
+            session.setAttribute("organization_id", savedPerson.getOrganization().getId());
+        }
         return ResponseEntity.ok(savedPerson);
     }
 
@@ -66,6 +72,10 @@ public class PersonController {
         // Sessiooni loomine
         session.setAttribute("user_id", dbPerson.getId());
         session.setAttribute("user_role", dbPerson.getRole().getName());
+
+        if (dbPerson.getOrganization() != null) {
+            session.setAttribute("organization_id", dbPerson.getOrganization().getId());
+        }
         return ResponseEntity.ok(dbPerson);
     }
 
@@ -96,6 +106,30 @@ public class PersonController {
 
     @GetMapping("/users")
     public List<Person> getUsers(){
+        return personRepository.findAll();
+    }
+
+    @GetMapping("/users/{id}")
+    public Person getOnePerson(@PathVariable Long id){
+        return personRepository.findById(id).orElseThrow();
+    }
+
+    @PutMapping("/users/{id}")
+    public List<Person> editPerson(@RequestBody Person person){
+        if (person.getId() == null){
+            throw new RuntimeException("Cannot edit without ID");
+        }
+        if (!personRepository.existsById(person.getId())){
+            throw new RuntimeException("Person ID doesn't exist");
+        }
+        person.setPassword(personService.hashPassword(person.getPassword()));
+        personRepository.save(person);
+        return personRepository.findAll();
+    }
+
+    @DeleteMapping("users/{id}")
+    public List<Person> deletePerson(@PathVariable Long id){
+        personRepository.deleteById(id);
         return personRepository.findAll();
     }
 }

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Footer } from "../components/Footer"
+import { Navbar } from "../components/NavigationBar";
+import { Footer } from "../components/Footer";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
@@ -19,12 +20,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="et"
-      className={`${inter.variable} h-full antialiased`}
-    >
+    <html lang="et" className={`${inter.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col font-sans">
-        {children}
+        <Navbar />
+
+        <main className="flex-1">
+          {children}
+        </main>
+
         <Footer />
       </body>
     </html>

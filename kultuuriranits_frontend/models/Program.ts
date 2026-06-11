@@ -1,4 +1,5 @@
 import { Category } from "./Category";
+import { Organization } from "./Organization";
 
 export interface Program {
 
@@ -17,7 +18,7 @@ export interface Program {
     createdAt: string;
     updatedAt: string;
 
-    organizationId: number; // Hiljem tuleb relatinshipiks, kui kasutajakontod tehtud
+    organization?: Organization | null;
 
     imageName: string | null;
     imageType: string | null;

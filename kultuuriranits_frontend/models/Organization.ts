@@ -4,7 +4,7 @@ export interface Organization {
     address?: string;
     city?: string;
     state?: string;
-    type?: string;
+    type: string;
     phone?: string;
     email?: string;
 }

@@ -1,15 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Person } from "../../models/Person";
+import { Organization } from "../../models/Organization";
 
 export default function RegisterPage() {
     const router = useRouter();
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<boolean>(false);
+    const [organizations, setOrganizations] = useState<Organization[]>([]);
+    const [selectedOrgId, setSelectedOrgId] = useState<string>("");
 
-    // Hoiame vormi andmeid Person mudeli kujul
+    const API_URL = process.env.NEXT_PUBLIC_BACK_URL;
+
     const [formData, setFormData] = useState<Person>({
         firstName: "",
         lastName: "",
@@ -18,8 +22,39 @@ export default function RegisterPage() {
         personalCode: "",
     });
 
-    // Juhuks, kui tahad arenduse ajal lubada kasutajal ise rolli valida:
     const [selectedRoleId, setSelectedRoleId] = useState<number>(1);
+
+    // GET organization
+    useEffect(() => {
+        async function fetchOrganizations() {
+            try {
+                const res = await fetch(`${API_URL}/organization`);
+                if (res.ok) {
+                    const data = await res.json();
+                    setOrganizations(data);
+                }
+            } catch (err) {
+                console.error("Organisatsioonide laadimine ebaõnnestus", err);
+            }
+        }
+        fetchOrganizations();
+    }, [API_URL]);
+
+    const filteredOrganizations = organizations.filter((org) => {
+        if (selectedRoleId === 1) {
+            return org.type === "kooliasutus";
+        } else if (selectedRoleId === 2) {
+            return org.type === "kultuuriasutus";
+        } else if (selectedRoleId === null) {
+            return true;
+        }
+        return false;
+    });
+
+    const handleRoleChange = (roleId: number) => {
+        setSelectedRoleId(roleId);
+        setSelectedOrgId("");
+    };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -33,12 +68,19 @@ export default function RegisterPage() {
         e.preventDefault();
         setError(null);
 
-        // Paneme rolli objekti kaasa vastavalt valikule
+        if (!selectedOrgId) {
+            setError("Palun vali nimekirjast oma organisatsioon!");
+            return;
+        }
+
         const payload = {
             ...formData,
             role: {
                 id: selectedRoleId,
                 name: selectedRoleId === 2 ? "CULTURAL_INSTITUTION" : "TEACHER"
+            },
+            organization: {
+                id: Number(selectedOrgId)
             }
         };
 
@@ -51,17 +93,15 @@ export default function RegisterPage() {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify(payload),
-                credentials: "include", // Haldab sessiooniküpsiseid
+                credentials: "include",
             });
 
             if (!res.ok) {
-                // Kui backend viskab vea (nt vigane isikukood või e-mail olemas)
                 const errorData = await res.json();
                 throw new Error(errorData.message || "Registreerumine ebaõnnestus.");
             }
 
             setSuccess(true);
-            // Suuname kasutaja 2 sekundi pärast sisselogimise lehele
             setTimeout(() => {
                 router.push("/login");
             }, 2000);
@@ -122,6 +162,25 @@ export default function RegisterPage() {
                     <select value={selectedRoleId} onChange={(e) => setSelectedRoleId(Number(e.target.value))} style={{ width: "100%", padding: "8px" }}>
                         <option value={1}>Õpetaja (TEACHER)</option>
                         <option value={2}>Kultuuriasutus (CULTURAL_INSTITUTION)</option>
+                        <option value={3}>Admin (ADMIN)</option>
+                    </select>
+                </div>
+                <div>
+                    <label style={{ display: "block", marginBottom: "5px" }}>
+                        {selectedRoleId === 1 ? "Vali Kooliasutus" : "Vali Kultuuriasutus"}
+                    </label>
+                    <select
+                        value={selectedOrgId}
+                        onChange={(e) => setSelectedOrgId(e.target.value)}
+                        required
+                        style={{ width: "100%", padding: "8px" }}
+                    >
+                        <option value="">-- Vali asutus --</option>
+                        {filteredOrganizations.map((org) => (
+                            <option key={org.id} value={org.id}>
+                                {org.name}
+                            </option>
+                        ))}
                     </select>
                 </div>
 

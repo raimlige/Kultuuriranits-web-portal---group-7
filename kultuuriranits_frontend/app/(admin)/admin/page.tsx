@@ -5,7 +5,9 @@ export default function Home() {
         <main>
             <h1>Avaleht</h1>
             <p>Tere tulemast! || admin roll</p>
-            <Link href="/users">Kasutajad</Link>
+            <Link href="/admin/users">Kasutajad</Link>
+            <br />
+            <Link href="/admin/programs">Programmid</Link>
             <br />
         </main>
     )
