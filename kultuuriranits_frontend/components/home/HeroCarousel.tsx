@@ -21,22 +21,22 @@ const slides = [
   },
   {
     title: 'Õpetajatele ja muuseumidele',
-    description: 'Loodud koostöös haridus- ja kultuuriasutustega, et muuta õppekäigud kättesaadavamaks.',
-    buttonText: 'Vaata programme',
-    image: 'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?q=80&w=2070&auto=format&fit=crop',
+    description: 'Loodud koostöös Kultuuriministeeriumiga. Lihtsustab koolide ja kultuuriasutuste vahelist koostööd.',
+    buttonText: 'Loo konto',
+    image: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070&auto=format&fit=crop',
     color: 'from-purple-600 to-purple-800'
   }
 ];
 
 export function HeroCarousel() {
-  const [current, setCurrent] = useState(0);
+  const [currentSlide, setCurrentSlide] = useState(0);
 
   const nextSlide = useCallback(() => {
-    setCurrent((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
   }, []);
 
   const prevSlide = () => {
-    setCurrent((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
+    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   };
 
   useEffect(() => {
@@ -45,40 +45,43 @@ export function HeroCarousel() {
   }, [nextSlide]);
 
   return (
-    <div className="relative h-[600px] w-full overflow-hidden group">
-      {/* Slides */}
+    <div className="relative h-[500px] w-full overflow-hidden bg-gray-950 group">
       {slides.map((slide, index) => (
         <div
           key={index}
-          className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${index === current ? 'opacity-100' : 'opacity-0'
-            }`}
+          className={`absolute inset-0 transition-opacity duration-1000 ${
+            index === currentSlide 
+              ? 'opacity-100 z-10 pointer-events-auto' 
+              : 'opacity-0 z-0 pointer-events-none'
+          }`}
         >
-          {/* Background Image with Overlay */}
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url(${slide.image})` }}
-          >
-            <div className={`absolute inset-0 bg-gradient-to-r ${slide.color} opacity-70`}></div>
+          {/* Background Image with Gradient Overlay */}
+          <div className="absolute inset-0">
+            <img
+              src={slide.image}
+              alt={slide.title}
+              className="w-full h-full object-cover transform scale-105 transition-transform duration-10000"
+            />
+            <div className={`absolute inset-0 bg-gradient-to-r ${slide.color} mix-blend-multiply opacity-70`} />
+            <div className="absolute inset-0 bg-gradient-to-t from-gray-950/80 via-transparent to-transparent" />
           </div>
 
           {/* Content */}
-          <div className="relative h-full flex items-center">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-white">
-              <div className="max-w-2xl">
-                <h1 className="text-4xl md:text-6xl font-bold mb-4 drop-shadow-lg leading-tight">
-                  {slide.title}
-                </h1>
-                <p className="text-xl md:text-2xl mb-8 drop-shadow-md">
-                  {slide.description}
-                </p>
-                <div>
-                  <Link
-                    href="/otsi"
-                    className="inline-block bg-white text-gray-900 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-colors shadow-xl transform hover:scale-105"
-                  >
-                    {slide.buttonText}
-                  </Link>
-                </div>
+          <div className="relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
+            <div className="max-w-2xl text-white">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-6 drop-shadow-sm">
+                {slide.title}
+              </h1>
+              <p className="text-lg sm:text-xl text-gray-100/90 mb-8 max-w-xl leading-relaxed drop-shadow-sm">
+                {slide.description}
+              </p>
+              <div className="flex flex-wrap gap-4">
+                <Link
+                  href="/otsi"
+                  className="inline-block bg-white text-gray-900 px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 ease-out shadow-xl hover:bg-gray-100 hover:scale-105 hover:shadow-2xl active:scale-95"
+                >
+                  {slide.buttonText}
+                </Link>
               </div>
             </div>
           </div>
@@ -88,25 +91,26 @@ export function HeroCarousel() {
       {/* Navigation Buttons */}
       <button
         onClick={prevSlide}
-        className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/20 text-white hover:bg-white/40 transition-colors backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity"
+        className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/20 text-white backdrop-blur-sm opacity-0 z-20 cursor-pointer transition-all duration-300 ease-out group-hover:opacity-100 hover:bg-white/40 hover:scale-110 active:scale-95"
       >
         <ChevronLeft className="w-6 h-6" />
       </button>
       <button
         onClick={nextSlide}
-        className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/20 text-white hover:bg-white/40 transition-colors backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity"
+        className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/20 text-white backdrop-blur-sm opacity-0 z-20 cursor-pointer transition-all duration-300 ease-out group-hover:opacity-100 hover:bg-white/40 hover:scale-110 active:scale-95"
       >
         <ChevronRight className="w-6 h-6" />
       </button>
 
       {/* Dots */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3">
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3 z-20">
         {slides.map((_, index) => (
           <button
             key={index}
-            onClick={() => setCurrent(index)}
-            className={`w-3 h-3 rounded-full transition-all ${index === current ? 'bg-white w-8' : 'bg-white/50'
-              }`}
+            onClick={() => setCurrentSlide(index)}
+            className={`h-2.5 rounded-full transition-all duration-300 ease-out cursor-pointer ${
+              index === currentSlide ? 'w-8 bg-white' : 'w-2.5 bg-white/45 hover:bg-white/70 hover:scale-110'
+            }`}
           />
         ))}
       </div>

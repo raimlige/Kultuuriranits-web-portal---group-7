@@ -13,7 +13,7 @@ export function UserRoles() {
         'Personaalsed soovitused vastavalt vanusegrupile'
       ],
       buttonText: 'Alusta otsingut',
-      link: '/otsi'
+      link: '/programs'
     },
     {
       title: 'Kultuuriasutusele',
@@ -26,7 +26,7 @@ export function UserRoles() {
         'Detailne statistika külastatavuse kohta'
       ],
       buttonText: 'Liitu platvormiga',
-      link: '#'
+      link: '/signup'
     }
   ];
 
@@ -34,7 +34,7 @@ export function UserRoles() {
     <div className="py-16 bg-gray-50 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 mb-16">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Kellele see on?</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">Kellele Kultuuriranits mõeldud on?</h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Kultuuriranits on loodud sildade loomiseks hariduse ja kultuuri vahel, pakkudes väärtust mõlemale poolele.
           </p>
@@ -59,7 +59,7 @@ export function UserRoles() {
                 ))}
               </ul>
 
-              <button className={`w-full py-4 rounded-2xl font-bold text-white transition-all transform active:scale-95 ${role.color} hover:opacity-90`}>
+              <button className={`w-full py-4 rounded-2xl font-bold text-white transition-all duration-300 ease-out transform active:scale-95 hover:scale-[1.02] hover:shadow-lg cursor-pointer ${role.color} hover:opacity-90`}>
                 {role.buttonText}
               </button>
             </div>

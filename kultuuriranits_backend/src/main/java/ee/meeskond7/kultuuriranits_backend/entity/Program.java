@@ -1,6 +1,7 @@
 package ee.meeskond7.kultuuriranits_backend.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,6 +12,8 @@ import org.hibernate.annotations.JdbcTypeCode;
 import java.math.BigDecimal;
 import java.sql.Types;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -25,14 +28,42 @@ public class Program {
 
     private String title;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "LONGTEXT")
     private String description;
+
+    private String shortDescription;
+
+    private String connection;
+
+    @ElementCollection
+    @CollectionTable(
+            name = "program_connection_keys",
+            joinColumns = @JoinColumn(name = "program_id")
+    )
+    @Column(name = "connection_key")
+    private List<String> connectionKeys = new ArrayList<>();
+
+    @ElementCollection
+    @CollectionTable(
+            name = "program_languages",
+            joinColumns = @JoinColumn(name = "program_id")
+    )
+    @Column(name = "language1")
+    private List<String> languages = new ArrayList<>();
+
+    @ElementCollection
+    @CollectionTable(
+            name = "program_target_groups",
+            joinColumns = @JoinColumn(name = "program_id")
+    )
+    @Column(name = "connection_group1")
+    private List<String> targetGroups = new ArrayList<>();
 
     private BigDecimal pricePerStudent;
 
     private Integer durationMinutes;
 
-    private String targetGroup;
+    //private String targetGroup;
 
     private Integer minGroupSize;
 
@@ -40,9 +71,28 @@ public class Program {
 
     private String location;
 
-    private String language;
+    //private String language;
 
     private String status;
+
+    private Boolean wheelchair;
+
+    private Boolean outdoor;
+
+    private Boolean hev;
+
+    private Boolean lak;
+
+    private String addInfo;
+
+    private String contactEmail;
+
+    private String contactPhone;
+
+    private String address;
+
+    private String county;
+    private Double averageRating;
 
     private LocalDateTime createdAt;
 
@@ -52,7 +102,8 @@ public class Program {
     private String imageType;
     @Lob
     @JsonIgnore
-    @JdbcTypeCode(Types.BINARY)
+    //@JdbcTypeCode(Types.BINARY)
+    @Column(columnDefinition = "LONGBLOB")
     private byte[] imageData;
 
     @ManyToOne
@@ -60,4 +111,21 @@ public class Program {
 
     @ManyToOne
     private Organization organization;
+
+    @OneToMany(mappedBy = "program", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Material> materials;
+
+    public void addMaterial(Material material) {
+        if (materials == null) {
+            materials = new ArrayList<>();
+        }
+        materials.add(material);
+        material.setProgram(this);
+    }
+
+    public void removeMaterial(Material material) {
+        materials.remove(material);
+        material.setProgram(null);
+    }
 }

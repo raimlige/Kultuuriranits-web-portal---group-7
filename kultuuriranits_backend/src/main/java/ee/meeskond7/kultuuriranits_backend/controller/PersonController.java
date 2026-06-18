@@ -7,11 +7,18 @@ import ee.meeskond7.kultuuriranits_backend.entity.Person;
 import ee.meeskond7.kultuuriranits_backend.entity.Program;
 import ee.meeskond7.kultuuriranits_backend.repository.PersonRepository;
 import ee.meeskond7.kultuuriranits_backend.service.PersonService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -28,6 +35,9 @@ public class PersonController {
     @Autowired
     private PersonService personService;
 
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
     // Sisselogimise kontroll (Next.js küsib seda lehe laadimisel)
     @GetMapping("/me")
     public ResponseEntity<Person> getMe(HttpSession session) {
@@ -40,51 +50,61 @@ public class PersonController {
 
     // Registreerimine
     @PostMapping("/signup")
-    public ResponseEntity<Person> signup(@RequestBody Person person, HttpSession session) {
-        //personService.validate(person, true); <-- valideerib isikukoodi õigsust: arenduse ajal võiks olla välja kommenteeritud.
+    public ResponseEntity<Person> signup(@RequestBody Person person, HttpServletRequest request) {
 
-        // Parooli krüpteerimine
         person.setPassword(personService.hashPassword(person.getPassword()));
         Person savedPerson = personRepository.save(person);
 
-        session.setAttribute("user_id", savedPerson.getId());
-        session.setAttribute("user_role", person.getRole().getName());
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(person.getEmail(), person.getPassword())
+            );
+            SecurityContext securityContext = SecurityContextHolder.getContext();
+            securityContext.setAuthentication(authentication);
 
-        if (savedPerson.getOrganization() != null) {
-            session.setAttribute("organization_id", savedPerson.getOrganization().getId());
+            HttpSession session = request.getSession(true);
+            session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
+
+            session.setAttribute("user_id", savedPerson.getId());
+            session.setAttribute("user_role", savedPerson.getRole().getName());
+            if (savedPerson.getOrganization() != null) {
+                session.setAttribute("organization_id", savedPerson.getOrganization().getId());
+            }
+        } catch (Exception e) {
+            return ResponseEntity.ok(savedPerson);
         }
+
         return ResponseEntity.ok(savedPerson);
     }
 
     // Sisselogimine
     @PostMapping("/login")
-    public ResponseEntity<Person> login(@RequestBody PersonLoginRecordDto personDto, HttpSession session) {
-        Person dbPerson = personRepository.findByEmail(personDto.email());
-        if (dbPerson == null) {
+    public ResponseEntity<Person> login(@RequestBody PersonLoginRecordDto personDto, HttpServletRequest request) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(personDto.email(), personDto.password())
+            );
+
+            SecurityContext securityContext = SecurityContextHolder.getContext();
+            securityContext.setAuthentication(authentication);
+
+            HttpSession session = request.getSession(true);
+            session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
+
+            Person dbPerson = personRepository.findByEmail(personDto.email());
+
+            session.setAttribute("user_id", dbPerson.getId());
+            session.setAttribute("user_role", dbPerson.getRole().getName());
+            if (dbPerson.getOrganization() != null) {
+                session.setAttribute("organization_id", dbPerson.getOrganization().getId());
+            }
+
+            return ResponseEntity.ok(dbPerson);
+
+        } catch (org.springframework.security.core.AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
-
-        // Parooli kontroll
-        if (!personService.checkPassword(personDto.password(), dbPerson.getPassword())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-        }
-
-        // Sessiooni loomine
-        session.setAttribute("user_id", dbPerson.getId());
-        session.setAttribute("user_role", dbPerson.getRole().getName());
-
-        if (dbPerson.getOrganization() != null) {
-            session.setAttribute("organization_id", dbPerson.getOrganization().getId());
-        }
-        return ResponseEntity.ok(dbPerson);
     }
-
-/*    // Väljalogimine
-    @PostMapping("/logout")
-    public ResponseEntity<Void> logout(HttpSession session) {
-        session.invalidate(); // Hävitab sessiooni serveris
-        return ResponseEntity.ok().build();
-    }*/
 
     // Kasutajaandmete muutmine
     @PutMapping("/profile")
@@ -93,10 +113,13 @@ public class PersonController {
         if (loggedInUserId == null || !loggedInUserId.equals(person.getId())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        //personService.validate(person, false);
+        Person existingPerson = personRepository.findById(person.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Kasutajat ei leitud"));
         if (person.getPassword() != null && !person.getPassword().isBlank()) {
             String hashedPassword = personService.hashPassword(person.getPassword());
             person.setPassword(hashedPassword);
+        } else {
+            person.setPassword(existingPerson.getPassword());
         }
         return ResponseEntity.ok(personRepository.save(person));
     }

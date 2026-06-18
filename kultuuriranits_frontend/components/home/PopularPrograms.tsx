@@ -11,7 +11,7 @@ export function PopularPrograms() {
   const [loading, setLoading] = useState<boolean>(true);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const BACKEND_URL = process.env.NEXT_PUBLIC_BACK_URL;
+  const API_URL = process.env.NEXT_PUBLIC_BACK_URL;
 
   useEffect(() => {
     const loadDatabaseData = async () => {
@@ -62,7 +62,7 @@ export function PopularPrograms() {
           <p className="text-gray-500 font-medium">Enim broneeritud ja kõrgelt hinnatud kultuuriprogrammid õpilastele</p>
         </div>
         <Link href="/programs" className="text-blue-600 font-extrabold hover:text-blue-800 transition-colors flex items-center gap-1">
-          Vaata kõiki <span className="text-lg leading-none">&rarr;</span>
+          Vaata kõiki <span className="text-lg leading-none -translate-y-0.5 inline-block">&rarr;</span>
         </Link>
       </div>
 
@@ -90,7 +90,7 @@ export function PopularPrograms() {
         >
           {popularPrograms.map((program) => {
             const displayImage = program.imageName 
-              ? `${BACKEND_URL}/uploads/${program.imageName}` 
+              ? `${API_URL}/uploads/${program.imageName}` 
               : 'https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?q=80&w=800';
 
             return (
@@ -98,11 +98,17 @@ export function PopularPrograms() {
                 
                 {/* Pildi ala */}
                 <div className="relative h-48 overflow-hidden shrink-0 bg-gray-50">
-                  <img 
-                    src={displayImage} 
-                    alt={program.title} 
-                    className="w-full h-full object-cover group-hover/card:scale-[1.02] transition-transform duration-500"
-                  />
+              <img
+                src={`${API_URL}/program/${program.id}/image`}
+                alt={program.title}
+                style={{
+                  width: "100%",
+                  height: "250px",
+                  objectFit: "cover",
+                  borderRadius: "8px",
+                  marginBottom: "12px",
+                }}
+              />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent"></div>
                   <div className="absolute top-4 left-4 flex gap-1.5">
                     <span className="bg-blue-600/90 backdrop-blur-md text-[9px] font-bold text-white uppercase tracking-wider px-2.5 py-1 rounded-full shadow-sm border border-blue-500/20 flex items-center gap-1">
@@ -134,7 +140,7 @@ export function PopularPrograms() {
                         <div className="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center text-blue-600 shrink-0">
                           <GraduationCap className="w-4 h-4" />
                         </div>
-                        <span className="truncate">{program.targetGroup}</span>
+                        <span className="truncate">{program.targetGroups}</span>
                       </div>
                       {/* Grupi suurus (min - max) */}
                       <div className="flex items-center gap-2.5 text-xs font-bold text-gray-600">

@@ -48,9 +48,6 @@ async function getUserFeedback(): Promise<Feedback[]> {
   }
 }
 
-
-
-
 export default async function ProgramPage({
   params,
 }: {
@@ -77,21 +74,34 @@ export default async function ProgramPage({
     ["Staatus", program.status],
   ];
 
-  const [currentUser, userFeedback] = await Promise.all([
+  const [currentUser, allFeedback] = await Promise.all([
     getCurrentUser(),
     getUserFeedback()
   ]);
 
   const currentUserId = currentUser ? currentUser.id : null;
 
+  const userFeedbackForThisProgram = allFeedback.find(
+    (fb) => {
+      const feedbackUserId = fb.person?.id;
+      return fb.program && fb.program.id === program.id && feedbackUserId === currentUserId;
+    }
+  );
+
+  const allFeedbackForThisProgram = allFeedback.filter(
+    (fb) => fb.program && fb.program.id === program.id
+  );
+
   return (
-    <div>
+    <div style={{ maxWidth: "800px", margin: "0 auto", padding: "20px" }}>
       <div
         key={program.id}
         style={{
-          border: "1px solid gray",
-          padding: "16px",
-          borderRadius: "8px",
+          border: "1px solid #e0e0e0",
+          padding: "24px",
+          borderRadius: "12px",
+          backgroundColor: "#fff",
+          boxShadow: "0 2px 4px rgba(0,0,0,0.05)"
         }}
       >
         <h2>{program.title}</h2>
@@ -101,7 +111,7 @@ export default async function ProgramPage({
           alt={program.title}
           style={{
             width: "100%",
-            height: "250px",
+            height: "300px",
             objectFit: "cover",
             borderRadius: "8px",
             marginBottom: "12px",
@@ -132,23 +142,54 @@ export default async function ProgramPage({
           </p>
         ))}
 
-        {/* Tagasiside */}
-        {currentUserId ? (
-          (() => {
-            const feedbackRelation = userFeedback.find(
-              (fb) => fb.program && fb.program.id === program.id
-            );
+        {/* Tagasiside lisamise/eemaldamise nupp sisseloginud kasutajale */}
+        <div style={{ marginTop: "20px", paddingTop: "20px", borderTop: "1px solid #eee" }}>
+          {currentUserId ? (
+            userFeedbackForThisProgram ? (
+              <RemoveFeedback feedbackId={userFeedbackForThisProgram.id} apiUrl={API_URL} />
+            ) : (
+              <AddFeedback programId={program.id} personId={currentUserId} apiUrl={API_URL} />
+            )
+          ) : (
+            <p style={{ color: "gray", fontSize: "14px" }}>Logi sisse, et lisada tagasisidet või lemmikutesse</p>
+          )}
+        </div>
+      </div>
 
-            if (feedbackRelation) {
-              return (
-                <RemoveFeedback feedbackId={feedbackRelation.id} apiUrl={API_URL} />);
-            } else {
-              return (
-                <AddFeedback programId={program.id} personId={currentUserId} apiUrl={API_URL} />);
-            }
-          })()
+      {/* PROGRAMMI FEEDBACKID */}
+      <div style={{ marginTop: "40px" }}>
+        <h3 style={{ fontSize: "20px", fontWeight: "bold", marginBottom: "16px" }}>
+          Külastajate tagasiside ({allFeedbackForThisProgram.length})
+        </h3>
+
+        {allFeedbackForThisProgram.length === 0 ? (
+          <p style={{ color: "gray", fontStyle: "italic" }}>Sellele programmile pole veel tagasisidet jäetud.</p>
         ) : (
-          <p style={{ color: "gray", fontSize: "14px" }}>Logi sisse, et lisada lemmikutesse</p>
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            {allFeedbackForThisProgram.map((fb) => (
+              <div
+                key={fb.id}
+                style={{
+                  border: "1px solid #eee",
+                  padding: "16px",
+                  borderRadius: "8px",
+                  backgroundColor: "#f9f9f9"
+                }}
+              >
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                  <span style={{ fontWeight: "bold", fontSize: "14px" }}>
+                    {fb.person?.firstName} {fb.person?.lastName}
+                  </span>
+                  <span style={{ color: "#ffb100", fontWeight: "bold" }}>
+                    {"★".repeat(fb.rating || 0)}{"☆".repeat(5 - (fb.rating || 0))} ({fb.rating}/5)
+                  </span>
+                </div>
+                <p style={{ margin: 0, fontSize: "14px", color: "#444", fontStyle: "italic" }}>
+                  {`"${fb.text}"`}
+                </p>
+              </div>
+            ))}
+          </div>
         )}
       </div>
     </div>

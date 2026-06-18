@@ -1,107 +1,176 @@
 import Link from 'next/link';
+import { FaXTwitter, FaInstagram, FaYoutube, FaLinkedinIn } from 'react-icons/fa6';
 
 export function Footer() {
   return (
     <footer className="bg-[#003399] text-white py-12 px-4 sm:px-6 lg:px-8 w-full mt-auto">
       <div className="max-w-7xl mx-auto">
-        
-        {/* Ülemine sektsioon: Logo ja Lingid */}
         <div className="grid grid-cols-1 md:grid-cols-5 gap-8 pb-12">
-          
-          {/* Peamine Logo ja Sotsiaalmeedia */}
-          <div className="md:col-span-1 space-y-4">
-            <h2 className="text-2xl font-semibold tracking-tight">Kultuuriranits</h2>
-            <div className="flex space-x-4 text-xl">
-              {/* Sotsiaalmeedia ikoonide kohahoidjad */}
-              <a href="#" className="hover:opacity-80 transition-opacity" aria-label="X">
-                <span className="font-bold text-lg">𝕏</span>
-              </a>
-              <a href="#" className="hover:opacity-80 transition-opacity" aria-label="Instagram">
-                <span>📸</span>
-              </a>
-              <a href="#" className="hover:opacity-80 transition-opacity" aria-label="YouTube">
-                <span>▶️</span>
-              </a>
-              <a href="#" className="hover:opacity-80 transition-opacity" aria-label="LinkedIn">
-                <span className="font-bold">in</span>
-              </a>
+          <div className="md:col-span-1 flex flex-col justify-between h-full min-h-[100px]">
+            <div className="w-fit space-y-4">
+              <h2 className="text-2xl font-semibold tracking-tight">
+                Kultuuriranits
+              </h2>
+
+              <div className="flex justify-between items-center w-full pt-1" style={{ minHeight: '24px' }}>
+                <a
+                  href="#"
+                  className="text-white/80 hover:text-white transition-colors"
+                  aria-label="X"
+                >
+                  <FaXTwitter className="w-5 h-5" />
+                </a>
+
+                <a
+                  href="#"
+                  className="text-white/80 hover:text-white transition-colors"
+                  aria-label="Instagram"
+                >
+                  <FaInstagram className="w-5 h-5" />
+                </a>
+
+                <a
+                  href="#"
+                  className="text-white/80 hover:text-white transition-colors"
+                  aria-label="YouTube"
+                >
+                  <FaYoutube className="w-5 h-5" />
+                </a>
+
+                <a
+                  href="#"
+                  className="text-white/80 hover:text-white transition-colors"
+                  aria-label="LinkedIn"
+                >
+                  <FaLinkedinIn className="w-5 h-5" />
+                </a>
+              </div>
             </div>
           </div>
 
-          {/* Info */}
-          <div>
-            <h3 className="font-medium text-lg border-b border-white/30 pb-1 mb-3 inline-block pr-8">Info</h3>
-            <ul className="space-y-2 text-sm text-white/80">
-              <li><Link href="/info" className="hover:text-white transition-colors">Meist</Link></li>
-              <li><Link href="/programs" className="hover:text-white transition-colors">Kultuuriprogrammid</Link></li>
-            </ul>
-          </div>
+          <div className="md:col-span-4 grid grid-cols-2 sm:grid-cols-4 gap-8">
+            <div className="space-y-3">
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-white/70">
+                Avasta
+              </h3>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <Link href="/programs" className="text-white/80 hover:text-white transition-colors">
+                    Kultuuriprogrammid
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/materials" className="text-white/80 hover:text-white transition-colors">
+                    Õppematerjalid
+                  </Link>
+                </li>
+              </ul>
+            </div>
 
-          {/* Privaatsus */}
-          <div>
-            <h3 className="font-medium text-lg border-b border-white/30 pb-1 mb-3 inline-block pr-8">Privaatsus</h3>
-            <ul className="space-y-2 text-sm text-white/80">
-              <li><Link href="/tingimused" className="hover:text-white transition-colors">Kasutustingimused</Link></li>
-              <li><Link href="/privaatsus" className="hover:text-white transition-colors">Isikuandmete töötlus</Link></li>
-            </ul>
-          </div>
+            <div className="space-y-3">
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-white/70">
+                Juurdepääsetavus
+              </h3>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <Link
+                    href="/accessibility"
+                    className="text-white/80 hover:text-white transition-colors"
+                  >
+                    Juurdepääsetavuse avaldus
+                  </Link>
+                </li>
+              </ul>
+            </div>
 
-          {/* Õpetajatele */}
-          <div>
-            <h3 className="font-medium text-lg border-b border-white/30 pb-1 mb-3 inline-block pr-8">Õpetajatele</h3>
-            <ul className="space-y-2 text-sm text-white/80">
-              <li><Link href="/juhendid" className="hover:text-white transition-colors">Kuidas tellida</Link></li>
-              <li><Link href="/kkk" className="hover:text-white transition-colors">Korduvad küsimused</Link></li>
-            </ul>
-          </div>
+            <div className="space-y-3">
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-white/70">
+                Portaalist
+              </h3>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <Link href="/info" className="text-white/80 hover:text-white transition-colors">
+                    Mis on Kultuuriranits?
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/contact" className="text-white/80 hover:text-white transition-colors">
+                    Kontakt
+                  </Link>
+                </li>
+              </ul>
+            </div>
 
-          {/* Kultuuriasutustele */}
-          <div>
-            <h3 className="font-medium text-lg border-b border-white/30 pb-1 mb-3 inline-block pr-8">Kultuuriasutustele</h3>
-            <ul className="space-y-2 text-sm text-white/80">
-              <li><Link href="/programs/add" className="hover:text-white transition-colors">Programmi lisamine</Link></li>
-              <li><Link href="/partnerile" className="hover:text-white transition-colors">Partnerluslepingud</Link></li>
-            </ul>
+            <div className="space-y-3">
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-white/70">
+                Juriidiline info
+              </h3>
+              <ul className="space-y-2 text-sm">
+                <li>
+                  <Link href="/privacy" className="text-white/80 hover:text-white transition-colors">
+                    Privaatsuspoliitika
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/terms" className="text-white/80 hover:text-white transition-colors">
+                    Kasutustingimused
+                  </Link>
+                </li>
+              </ul>
+            </div>
           </div>
-
         </div>
 
-        <div className="border-t border-white/20 pt-8 grid grid-cols-1 md:grid-cols-4 gap-8 items-end text-sm text-white/90">
-          
-          {/* Kultuuriministeeriumi Logo */}
-          <div className="flex items-center space-x-3 border-l-2 border-white/50 pl-4 h-12">
-            {/* Kolm lõvi */}
-            <div className="text-xl"><a href=""></a></div>
-            <div className="text-xs font-bold uppercase tracking-wider leading-tight">
-              Kultuuriministeerium
+        <div className="border-t border-white/20 pt-8 grid grid-cols-1 md:grid-cols-3 gap-8 items-start text-sm text-white/90">
+          <div className="space-y-1">
+            <h4 className="font-bold text-base">Annikki Aruväli</h4>
+            <div className="text-white/70 leading-snug pb-1">
+              Kultuurihariduse ja<br />ligipääsetavuse nõunik
             </div>
-          </div>
-
-          {/* Kultuuriranitsa Kontakt */}
-          <div>
-            <h4 className="font-semibold mb-2">Kultuuriranits</h4>
-            <p className="text-white/80">+372 xxxx xxxx</p>
-            <a href="mailto:kultuuriranits@kul.ee" className="text-white/80 hover:underline">
+            <p className="text-white/80 pt-1">+372 5199 6885</p>
+            <a
+              href="mailto:kultuuriranits@kul.ee"
+              className="inline-block text-white/80 hover:text-white hover:underline transition-all"
+            >
               kultuuriranits@kul.ee
             </a>
           </div>
 
-          {/* Kultuuriministeeriumi Kontakt */}
-          <div>
-            <h4 className="font-semibold mb-2">Kultuuriministeerium</h4>
-            <p className="text-white/80">+372 xxxx xxxx</p>
-            <p className="text-white/80">min@kul.ee</p>
-            <p className="text-white/80 text-xs">Suur-Karja 23, 15076 Tallinn</p>
+          <div className="space-y-1 md:pl-4">
+            <h4 className="font-bold text-base">Kultuuriministeerium</h4>
+            <p className="text-white/80 pt-1">+372 628 2222</p>
+            <a
+              href="mailto:min@kul.ee"
+              className="inline-block text-white/80 hover:text-white hover:underline transition-all mb-1"
+            >
+              min@kul.ee
+            </a>
+            <p className="text-white/60 text-xs mt-1">
+              Suur-Karja 23, 15076 Tallinn
+            </p>
           </div>
 
-          {/* Uudiskiri */}
-          <div className="space-y-3">
-            <h4 className="font-semibold">Püsi kursis!</h4>
-            <p className="text-xs text-white/80">Telli igakuine ülevaade uutest programmidest.</p>
-            <button className="w-full bg-[#0066FF] hover:bg-[#0055DD] text-white font-medium py-2 px-4 rounded transition-colors text-center text-sm shadow-sm">
-              Liitu uudiskirjaga!
-            </button>
+          <div className="space-y-3 md:max-w-sm md:ml-auto w-full">
+            <h4 className="font-bold text-base">Püsi kursis uudistega</h4>
+            <form className="flex gap-2">
+              <input
+                type="email"
+                placeholder="Sinu e-posti aadress"
+                className="bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-sm placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 flex-1 min-w-0"
+                required
+              />
+              <button
+                type="submit"
+                className="bg-white text-[#003399] font-bold px-4 py-2.5 rounded-xl text-sm hover:bg-white/90 transition-colors shrink-0 cursor-pointer"
+              >
+                Liitu
+              </button>
+            </form>
           </div>
+        </div>
+
+        <div className="border-t border-white/10 mt-12 pt-6 text-center text-xs text-white/50">
+          <p>&copy; {new Date().getFullYear()} Kultuuriranits. Kõik õigused kaitstud.</p>
         </div>
       </div>
     </footer>
