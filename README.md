@@ -14,10 +14,10 @@ Projekt valmis **Tallinna Ülikooli Digitehnoloogiate instituudi** õppeaine **I
 
 ## Töötav rakendus
 
-Rakendus on kättesaadav aadressil (HETKEL VEEL KATKI):
+Rakendus on kättesaadav aadressil:
 
 ```txt
-https://jaltdorf.eu
+https://raimondlige.eu
 ```
 
 ---
